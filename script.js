@@ -1,12 +1,10 @@
 let studentList = document.querySelector("#studentList");
-
 let getName = document.querySelector("#name");
 let getAge = document.querySelector("#age");
 let getTurno = document.querySelector("#turno");
-
 let inputFilter = document.querySelector("#filter");
-
 let students = JSON.parse(localStorage.getItem("student_list"));
+let saveStudent = document.querySelector("#save");
 
 // let createLocalStorage = [{name: "Rodolfo", age: 30, turno: "noturno"}];
 // localStorage.setItem("student_list", JSON.stringify(createLocalStorage));
@@ -23,8 +21,6 @@ const renderStudentList = (data) => {
   studentList.innerHTML = "";
   let students = data;
   for(student of students) {
-    let createStudentWrapper = document.createElement("div");
-    createStudentWrapper.classList.add("student");
     let markup = `
       <div class="student">
         <span class="name">${student.name}</span>
@@ -34,8 +30,7 @@ const renderStudentList = (data) => {
         <hr>
       </div>
     `;
-    createStudentWrapper.innerHTML = markup;
-    studentList.appendChild(createStudentWrapper);
+    studentList.insertAdjacentHTML("beforeend", markup);
   }
   hasData();
 }
@@ -51,7 +46,9 @@ const addStudent = () => {
     getName.value = "";
     getAge.value = "";
     getTurno.value = "";
-  
+    // elements.forEach(element => {
+    //   element.style.borderColor = "initial";
+    // });
     getName.style.borderColor = "initial";
     getAge.style.borderColor = "initial";
     getTurno.style.borderColor = "initial";
@@ -67,13 +64,12 @@ const addStudent = () => {
   }
 };
 
-inputFilter.addEventListener("keyup", () => {
+const filter = () => {
   let inputFilterValue = inputFilter.value.toUpperCase();
   const search = students.filter((student) => {
     return student.name.toUpperCase().indexOf(inputFilterValue) > -1;
   });
   let dataFilter;
-  console.log(search);
   if(search) {
     dataFilter = search;
     renderStudentList(dataFilter);
@@ -83,9 +79,9 @@ inputFilter.addEventListener("keyup", () => {
   } else {
     dataFilter = JSON.parse(localStorage.getItem("student_list"));
   }
-});
+};
 
-studentList.addEventListener("click", (el) => {
+const deleteStudent = (el) => {
   students = JSON.parse(localStorage.getItem("student_list"));
   let studentFilter, targetElementParent, studentName;
 
@@ -103,9 +99,10 @@ studentList.addEventListener("click", (el) => {
   students = studentFilter;
   let newStudentList = JSON.parse(localStorage.getItem("student_list"));
   renderStudentList(newStudentList);
-});
+}
 
-let saveStudent = document.querySelector("#save");
+inputFilter.onkeyup = filter;
+studentList.onclick = deleteStudent;
 saveStudent.onclick = addStudent;
 
 renderStudentList(students);
